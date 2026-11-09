@@ -1,5 +1,13 @@
 node {
 
+    // Checkout GitHub Repository
+    stage('Checkout') {
+        echo 'Downloading Java Application'
+
+        checkout scm
+    }
+
+    // BUILD STAGE
     stage('Build') {
 
         echo 'Starting Build Stage'
@@ -7,12 +15,16 @@ node {
         sh '''
             mkdir -p build
             javac -d build src/Main.java src/AppTest.java
-            jar --create --file build/application.jar -C build Main.class
+
+            jar --create \
+                --file build/application.jar \
+                -C build Main.class
         '''
 
-        echo 'Build Completed Successfully'
+        echo 'BUILD SUCCESSFUL'
     }
 
+    // TEST STAGE
     stage('Test') {
 
         echo 'Starting Test Stage'
@@ -21,9 +33,10 @@ node {
             java -cp build AppTest
         '''
 
-        echo 'Testing Completed Successfully'
+        echo 'TEST SUCCESSFUL'
     }
 
+    // DEPLOY STAGE
     stage('Deploy') {
 
         echo 'Starting Deploy Stage'
@@ -31,9 +44,10 @@ node {
         sh '''
             mkdir -p deploy
             cp build/application.jar deploy/
-            echo "Application Deployed Successfully"
+            ls -l deploy/
         '''
 
-        echo 'Deploy Completed Successfully'
+        echo 'DEPLOY SUCCESSFUL'
     }
+
 }
